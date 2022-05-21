@@ -1,65 +1,54 @@
-TokenType = {}
-
-function TokenType:new(o)
-  self.__index = self
-  setmetatable(o, self)
-  self.__tostring = function(v)
-      return string.format("TokenType(%s)", v:getText())
-  end
-  return o
+Class = require("oo")
+TokenType = Class()
+TokenType.__tostring = function(v)
+  return string.format("TokenType(%s)", v.text)
 end
 
-function TokenType:getValue()
-  return self.value
-end
-
-function TokenType:getText()
-  return self.text
-end
+--[[TokenType = {}
 
 function TokenType:getClassName()
-  return "TokenType"
+    return "TokenType"
 end
 
 function TokenType:equals(other)
-  if other.getClassName() == "TokenType" then
-    return self.getValue() == other.getValue()
-  else
-    error("Comparing TokenType with a value from another class:" + other.getClassName())
-  end
-end
+    if other.getClassName() == "TokenType" then
+        return self.getValue() == other.getValue()
+    else
+        error("Comparing TokenType with a value from another class:" + other.getClassName())
+    end
+end]]
 
-ILLEGAL = TokenType:new { value = 0, text = "ILLEGAL" }
-EOF = TokenType:new { value = 1, text = "EOF" }
-ASSIGN = TokenType:new { value = 2, text = "=" }
-EQ = TokenType:new { value = 3, text = "==" }
-NOT_EQ = TokenType:new { value = 4, text = "!=" }
-IDENT = TokenType:new { value = 5, text = "IDENT" }
-INT = TokenType:new { value = 6, text = "INT" }
-PLUS = TokenType:new { value = 7, text = "+" }
-COMMA = TokenType:new { value = 8, text = "," }
-SEMICOLON = TokenType:new { value = 9, text = ";" }
-COLON = TokenType:new { value = 10, text = ":" }
-MINUS = TokenType:new { value = 11, text = "-" }
-BANG = TokenType:new { value = 12, text = "!" }
-SLASH = TokenType:new { value = 13, text = "/" }
-ASTERISK = TokenType:new { value = 14, text = "*" }
-LT = TokenType:new { value = 15, text = "<" }
-GT = TokenType:new { value = 16, text = ">" }
-LPAREN = TokenType:new { value = 17, text = "(" }
-RPAREN = TokenType:new { value = 18, text = ")" }
-LBRACE = TokenType:new { value = 19, text = "{" }
-RBRACE = TokenType:new { value = 20, text = "}" }
-LBRACKET = TokenType:new { value = 21, text = "[" }
-RBRACKET = TokenType:new { value = 22, text = "]" }
-FUNCTION = TokenType:new { value = 23, text = "FUNCTION" }
-LET = TokenType:new { value = 24, text = "LET" }
-TRUE = TokenType:new { value = 25, text = "TRUE" }
-FALSE = TokenType:new { value = 26, text = "FALSE" }
-IF = TokenType:new { value = 27, text = "IF" }
-ELSE = TokenType:new { value = 28, text = "ELSE" }
-RETURN = TokenType:new { value = 29, text = "RETURN" }
-STRING = TokenType:new { value = 30, text = "STRING" }
+ILLEGAL = TokenType { value = 0, text = "ILLEGAL" }
+EOF = TokenType { value = 1, text = "EOF" }
+ASSIGN = TokenType { value = 2, text = "=" }
+EQ = TokenType { value = 3, text = "==" }
+NOT_EQ = TokenType { value = 4, text = "!=" }
+IDENT = TokenType { value = 5, text = "IDENT" }
+INT = TokenType { value = 6, text = "INT" }
+PLUS = TokenType { value = 7, text = "+" }
+COMMA = TokenType { value = 8, text = "," }
+SEMICOLON = TokenType { value = 9, text = ";" }
+COLON = TokenType { value = 10, text = ":" }
+MINUS = TokenType { value = 11, text = "-" }
+BANG = TokenType { value = 12, text = "!" }
+SLASH = TokenType { value = 13, text = "/" }
+ASTERISK = TokenType { value = 14, text = "*" }
+LT = TokenType { value = 15, text = "<" }
+GT = TokenType { value = 16, text = ">" }
+LPAREN = TokenType { value = 17, text = "(" }
+RPAREN = TokenType { value = 18, text = ")" }
+LBRACE = TokenType { value = 19, text = "{" }
+RBRACE = TokenType { value = 20, text = "}" }
+LBRACKET = TokenType { value = 21, text = "[" }
+RBRACKET = TokenType { value = 22, text = "]" }
+FUNCTION = TokenType { value = 23, text = "FUNCTION" }
+LET = TokenType { value = 24, text = "LET" }
+TRUE = TokenType { value = 25, text = "TRUE" }
+FALSE = TokenType { value = 26, text = "FALSE" }
+IF = TokenType { value = 27, text = "IF" }
+ELSE = TokenType { value = 28, text = "ELSE" }
+RETURN = TokenType { value = 29, text = "RETURN" }
+STRING = TokenType { value = 30, text = "STRING" }
 
 local keywords = {
   ["fn"] = FUNCTION,
@@ -80,22 +69,7 @@ function LookupIdent(name)
   end
 end
 
-Token = {}
-
-function Token:new(o)
-  self.__index = self
-  setmetatable(o, self)
-  self.__tostring = function(v)
-    return string.format("Token(tokenType:%s, literal:'%s')", tostring(v:getTokenType()), v:getLiteral())
-  end
-  return o
+Token = Class()
+Token.__tostring = function(v)
+  return string.format("Token(tokenType:%s, literal:'%s')", tostring(v.tokenType), v.literal)
 end
-
-function Token:getTokenType()
-  return self.tokenType
-end
-
-function Token:getLiteral()
-  return self.literal
-end
-

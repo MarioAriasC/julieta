@@ -1,7 +1,7 @@
 require('lexer')
 require 'busted.runner'()
 describe("A lexer", function()
-    it("should be produce valid tokens", function()
+    it("should produce valid tokens", function()
         local code = [[
 let five = 5;
 let ten = 10;
@@ -27,7 +27,7 @@ if (5 < 10) {
 [1,2];
 {"foo":"bar"}
         ]]
-        local lexer = Lexer:new { input = code }
+        local lexer = Lexer { input = code }
         local expected = {
             { LET, "let" },
             { IDENT, "five" },
@@ -119,8 +119,8 @@ if (5 < 10) {
             local tokenType = expected[i][1]
             local literal = expected[i][2]
             local token = lexer:nextToken()
-            assert.are.same(tokenType, token:getTokenType() )
-            assert.are.same(literal,token:getLiteral() )
+            assert.are.same(tokenType, token.tokenType )
+            assert.are.same(literal,token.literal )
         end
     end)
 

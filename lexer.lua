@@ -1,5 +1,6 @@
 require("tokens")
 require("utils")
+require("oo")
 
 local function isIdentifier(char)
   if string.match(char, "%a") or char == "_" then
@@ -16,20 +17,14 @@ local function isDigit(char)
 end
 
 ZERO = ""
-WHITE_SPACES = { " ", "\t", "\n", "\r", "" }
 
-Lexer = {}
+Lexer = Class()
 
-function Lexer:new(o)
-
-  self.__index = self
-  setmetatable(o, self)
+function Lexer:__init()
   self.position = 1
   self.readPosition = 1
   self.ch = ZERO
-  self.input = o.input
   self:readChar()
-  return o
 end
 
 function Lexer:readChar()
@@ -53,7 +48,7 @@ function Lexer:nextToken()
     end
     local currentChar = self.ch
     self:readChar()
-    return Token:new { tokenType = twoChar, literal = Ternary(duplicateChar, string.format("%s%s", currentChar, currentChar), string.format("%s%s", currentChar, self.ch)) }
+    return Token { tokenType = twoChar, literal = Ternary(duplicateChar, string.format("%s%s", currentChar, currentChar), string.format("%s%s", currentChar, self.ch)) }
   end
 
   self:skipWhitespace()
@@ -111,10 +106,10 @@ function Lexer:nextToken()
       return endsWithEqual(BANG, NOT_EQ, false)
     end,
     ['"'] = function()
-      return Token:new { tokenType = STRING, literal = self:readString() }
+      return Token { tokenType = STRING, literal = self:readString() }
     end,
     [ZERO] = function()
-      return Token:new { tokenType = EOF, literal = "" }
+      return Token { tokenType = EOF, literal = "" }
     end
 
   }
@@ -126,12 +121,12 @@ function Lexer:nextToken()
   end
   if isIdentifier(self.ch) then
     local identifier = self:readIdentifier()
-    return Token:new { tokenType = LookupIdent(identifier), literal = identifier }
+    return Token { tokenType = LookupIdent(identifier), literal = identifier }
   end
   if isDigit(self.ch) then
-    return Token:new { tokenType = INT, literal = self:readNumber() }
+    return Token { tokenType = INT, literal = self:readNumber() }
   end
-  return Token:new { tokenType = ILLEGAL, self.ch }
+  return Token { tokenType = ILLEGAL, self.ch }
 end
 
 function Lexer:skipWhitespace()
@@ -164,7 +159,7 @@ function Lexer:readValue(predicate)
 end
 
 function Lexer:token(tokenType)
-  return Token:new { tokenType = tokenType, literal = self.ch }
+  return Token { tokenType = tokenType, literal = self.ch }
 end
 
 function Lexer:readString()
