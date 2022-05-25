@@ -1,7 +1,7 @@
 Class = require("oo")
 TokenType = Class()
 TokenType.__tostring = function(v)
-  return string.format("TokenType(%s)", v.text)
+    return string.format("TokenType(%s)", v.text)
 end
 
 --[[TokenType = {}
@@ -51,26 +51,26 @@ RETURN = TokenType { value = 29, text = "RETURN" }
 STRING = TokenType { value = 30, text = "STRING" }
 
 local keywords = {
-  ["fn"] = FUNCTION,
-  ["let"] = LET,
-  ["true"] = TRUE,
-  ["false"] = FALSE,
-  ["if"] = IF,
-  ["else"] = ELSE,
-  ["return"] = RETURN
+    ["fn"] = FUNCTION,
+    ["let"] = LET,
+    ["true"] = TRUE,
+    ["false"] = FALSE,
+    ["if"] = IF,
+    ["else"] = ELSE,
+    ["return"] = RETURN
 }
 
 function LookupIdent(name)
-  local reserved = keywords[name]
-  if reserved == nil then
-    return IDENT
-  else
-    return reserved
-  end
+    local reserved = keywords[name]
+    if reserved == nil then
+        return IDENT
+    else
+        return reserved
+    end
 end
 
 Token = Class()
 Token.__tostring = function(v)
-  return string.format("Token(tokenType:%s, literal:'%s')", tostring(v.tokenType), v.literal)
+    return string.format("Token(tokenType:%s, literal:'%s')", tostring(v.tokenType), v.literal)
 end
 
