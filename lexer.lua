@@ -34,7 +34,8 @@ function Lexer:readChar()
 end
 
 function Lexer:peakChar()
-  if self.readPosition >= #self.input then
+
+  if self.readPosition > #self.input then
     return ZERO
   else
     return string.sub(self.input, self.readPosition, self.readPosition)

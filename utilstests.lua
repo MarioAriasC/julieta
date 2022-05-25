@@ -52,3 +52,25 @@ function AssertIdentifier(expression, expectedValue, assert)
     assert.are.same(expectedValue, expression.value)
     assert.are.same(expectedValue, expression:getTokenLiteral())
 end
+
+function AssertInfixExpression(expression, leftValue, operator, rightValue, assert)
+    AssertLiteralExpression(expression.left, leftValue, assert)
+    assert.are.same(operator, expression.operator)
+    AssertLiteralExpression(expression.right, rightValue, assert)
+end
+
+function ForEachTests(array, params, body)
+    local switch = {
+        [2] = function(entry)
+            body(entry[1], entry[2])
+        end,
+        [3] = function(entry)
+            body(entry[1], entry[2], entry[3])
+        end,
+        [4] = function(entry)
+            body(entry[1], entry[2], entry[3], entry[4])
+        end
+    }
+
+    ForEach(array, switch[params])
+end

@@ -1,4 +1,5 @@
 require('lexer')
+require("utilstests")
 require 'busted.runner'()
 describe("A lexer", function()
     it("should produce valid tokens", function()
@@ -115,13 +116,11 @@ if (5 < 10) {
             { STRING, "bar" },
             { RBRACE, "}" },
             { EOF, "" } }
-        for i = 1, #expected do
-            local tokenType = expected[i][1]
-            local literal = expected[i][2]
+        ForEachTests(expected, 2, function(tokenType, literal)
             local token = lexer:nextToken()
-            assert.are.same(tokenType, token.tokenType )
-            assert.are.same(literal,token.literal )
-        end
+            assert.are.same(tokenType, token.tokenType)
+            assert.are.same(literal, token.literal)
+        end)
     end)
 
 end)
