@@ -73,3 +73,4 @@ Token = Class()
 Token.__tostring = function(v)
   return string.format("Token(tokenType:%s, literal:'%s')", tostring(v.tokenType), v.literal)
 end
+

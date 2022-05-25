@@ -36,8 +36,8 @@ function ForEach(array, body)
 end
 
 function ForEachIndexed(array, body)
-    for k, v in pairs(array) do
-    body(k,v)
+  for k, v in pairs(array) do
+    body(k, v)
   end
 end
 
@@ -52,3 +52,4 @@ end
 function Len(tbl)
   return #Keys(tbl)
 end
+

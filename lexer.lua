@@ -173,4 +173,3 @@ function Lexer:readString()
   end
   return string.sub(self.input, start, (self.position - 1))
 end
-
