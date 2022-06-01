@@ -283,32 +283,32 @@ end
 
 function Eval(node, env)
     --print("eval", node)
-    if node:is(Program) then
+    if node.className == "Program" then
         return evalProgram(node.statements, env)
     end
-    if node:is(Identifier) then
+    if node.className == "Identifier" then
         return evalIdentifier(node.value, env)
     end
-    if node:is(IntegerLiteral) then
+    if node.className == "IntegerLiteral" then
         return MInteger { value = node.value }
     end
-    if node:is(InfixExpression) then
+    if node.className == "InfixExpression" then
         return ifNotError(Eval(node.left, env), function(left)
             return ifNotError(Eval(node.right, env), function(right)
                 return evalInfixExpression(node.operator, left, right)
             end)
         end)
     end
-    if node:is(BlockStatement) then
+    if node.className == "BlockStatement" then
         return evalBlockStatement(node, env)
     end
-    if node:is(ExpressionStatement) then
+    if node.className == "ExpressionStatement" then
         return Eval(node.expression, env)
     end
-    if node:is(IfExpression) then
+    if node.className == "IfExpression" then
         return evalIfExpression(node, env)
     end
-    if node:is(CallExpression) then
+    if node.className == "CallExpression" then
         return ifNotError(Eval(node.expression, env), function(f)
             local args = evalExpressions(node.arguments, env)
             if #args == 1 and isError(args[1]) then
@@ -317,33 +317,33 @@ function Eval(node, env)
             return applyFunction(f, args)
         end)
     end
-    if node:is(ReturnStatement) then
+    if node.className == "ReturnStatement" then
         return ifNotError(Eval(node.returnValue, env), function(value)
             return MReturnValue { value = value }
         end)
     end
-    if node:is(PrefixExpression) then
+    if node.className == "PrefixExpression" then
         return ifNotError(Eval(node.right, env), function(right)
             return evalPrefixExpression(node.operator, right)
         end)
     end
-    if node:is(BooleanLiteral) then
+    if node.className == "BooleanLiteral" then
         return toMBoolean(node.value)
     end
-    if node:is(LetStatement) then
+    if node.className == "LetStatement" then
         return ifNotError(Eval(node.value, env), function(value)
             --env[node.name.value] = value
             env:set(node.name.value, value)
             return value
         end)
     end
-    if node:is(FunctionLiteral) then
+    if node.className == "FunctionLiteral" then
         return MFunction { parameters = node.parameters, body = node.body, env = env }
     end
-    if node:is(StringLiteral) then
+    if node.className == "StringLiteral" then
         return MString { value = node.value }
     end
-    if node:is(IndexExpression) then
+    if node.className == "IndexExpression" then
         local left = Eval(node.left, env)
         if isError(left) then
             return left
@@ -355,10 +355,10 @@ function Eval(node, env)
         end
         return evalIndexExpression(left, index)
     end
-    if node:is(HashLiteral) then
+    if node.className == "HashLiteral" then
         return evalHashLiteral(node.entries, env)
     end
-    if node:is(ArrayLiteral) then
+    if node.className == "ArrayLiteral" then
         local elements = evalExpressions(node.elements, env)
         if #elements == 1 and isError(elements[1]) then
             return elements[1]
