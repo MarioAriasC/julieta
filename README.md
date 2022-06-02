@@ -30,3 +30,7 @@ luarocks install busted
 | [`lua repl.py`](repl.py)             | Run the Julieta REPL                               |
 
 You can run the benchmarks and repl files with either Lua or LuaJit. I didn't try any other Lua interprete
+
+## Acknowlegments 
+
+Julieta uses the [lua-oo](https://github.com/limadm/lua-oo) library from Daniel Lima 
