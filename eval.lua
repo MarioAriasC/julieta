@@ -31,10 +31,10 @@ local function evalProgram(statements, env)
     local result
     for i = 1, #statements do
         result = Eval(statements[i], env)
-        if result:is(MReturnValue) then
+        if result.className == "MReturnValue" then
             return result.value
         end
-        if result:is(MError) then
+        if result.className == "MError" then
             return result
         end
     end
@@ -42,7 +42,7 @@ local function evalProgram(statements, env)
 end
 
 local function ifNotError(obj, body)
-    if obj:is(MError) then
+    if obj.className == "MError" then
         return obj
     end
     return body(obj)
@@ -53,7 +53,7 @@ local function evalMinusPrefixOperatorExpression(right)
         return nil
     end
 
-    if right:is(MInteger) then
+    if right.className == "MInteger" then
         return -right
     end
     return MError { message = string.format("unknown operator: -%s", right.className) }
@@ -122,7 +122,7 @@ local function evalStringInfixExpression(operator, left, right)
 end
 
 local function evalInfixExpression(operator, left, right)
-    if left:is(MInteger) and right:is(MInteger) then
+    if left.className == "MInteger" and right.className == "MInteger" then
         return evalIntegerInfixExpression(operator, left, right)
     end
     if operator == "==" then
@@ -134,14 +134,14 @@ local function evalInfixExpression(operator, left, right)
     if left.className ~= right.className then
         return MError { message = string.format("type mismatch: %s %s %s", left.className, operator, right.className) }
     end
-    if left:is(MString) and right:is(MString) then
+    if left.className == "MString" and right.className == "MString" then
         return evalStringInfixExpression(operator, left, right)
     end
     return MError { message = string.format("unknown operator: %s %s %s", left.className, operator, right.className) }
 end
 
 local function isTruthy(obj)
-    if obj:is(MBoolean) then
+    if obj.className == "MBoolean" then
         return obj.value
     end
     if obj == M_NULL then
@@ -166,7 +166,7 @@ local function evalBlockStatement(node, env)
     local result
     for i = 1, #node.statements do
         result = Eval(node.statements[i], env)
-        if result:is(MReturnValue) or result:is(MError) then
+        if result.className == "MReturnValue" or result.className == "MError" then
             return result
         end
     end
@@ -186,7 +186,7 @@ local function evalIdentifier(identifier, env)
 end
 
 local function isError(obj)
-    return obj:is(MError)
+    return obj.className == "MError"
 end
 
 local function evalExpressions(arguments, env)
@@ -210,19 +210,19 @@ local function extendFunctionEnv(fn, args)
 end
 
 local function unwrapReturnValue(evaluated)
-    if evaluated:is(MReturnValue) then
+    if evaluated.className == "MReturnValue" then
         return evaluated.value
     end
     return evaluated
 end
 
 local function applyFunction(fn, args)
-    if fn:is(MFunction) then
+    if fn.className == "MFunction" then
         local extendEnv = extendFunctionEnv(fn, args)
         local evaluated = Eval(fn.body, extendEnv)
         return unwrapReturnValue(evaluated)
     end
-    if fn:is(MBuiltinFunction) then
+    if fn.className == "MBuiltinFunction" then
         local result = fn.fn(args)
         if result == nil then
             return M_NULL
@@ -252,10 +252,10 @@ local function evalArrayIndexExpression(elements, index)
 end
 
 local function evalIndexExpression(left, index)
-    if left:is(MArray) and index:is(MInteger) then
+    if left.className == "MArray" and index.className == "MInteger" then
         return evalArrayIndexExpression(left.elements, index.value)
     end
-    if left:is(MHash) then
+    if left.className == "MHash" then
         return evalHashIndexExpression(left.entries, index)
     end
     return MError { message = string.format("index operator not supported: %s", left.className) }
@@ -282,7 +282,6 @@ local function evalHashLiteral(hashPairs, env)
 end
 
 function Eval(node, env)
-    --print("eval", node)
     if node.className == "Program" then
         return evalProgram(node.statements, env)
     end

@@ -43,24 +43,31 @@ MInteger = MValue:extend(Hashable)
 MInteger.hashType = HashType.INTEGER
 MInteger.__tostring = toStringValue
 MInteger.className = "MInteger"
+
 MInteger.__unm = function(v)
     return MInteger { value = -(v.value) }
 end
+
 MInteger.__add = function(left, right)
     return MInteger { value = left.value + right.value }
 end
+
 MInteger.__sub = function(left, right)
     return MInteger { value = left.value - right.value }
 end
+
 MInteger.__mul = function(left, right)
     return MInteger { value = left.value * right.value }
 end
+
 MInteger.__div = function(left, right)
     return MInteger { value = left.value / right.value }
 end
+
 MInteger.__lt = function(left, right)
     return left.value < right.value
 end
+
 MInteger.__eq = function(left, right)
     return left.value == right.value
 end
@@ -88,6 +95,7 @@ end
 M_NULL = MNull {}
 
 MReturnValue = MObject:extend()
+MReturnValue.className = "MReturnValue"
 MReturnValue.__tostring = function(v)
     return tostring(v.value)
 end
