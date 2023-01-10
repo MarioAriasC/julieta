@@ -27,20 +27,6 @@ function Environment:get(key)
     return obj
 end
 
-local function evalProgram(statements, env)
-    local result
-    for i = 1, #statements do
-        result = Eval(statements[i], env)
-        if result.className == "MReturnValue" then
-            return result.value
-        end
-        if result.className == "MError" then
-            return result
-        end
-    end
-    return result
-end
-
 local function ifNotError(obj, body)
     if obj.className == "MError" then
         return obj
@@ -151,12 +137,12 @@ local function isTruthy(obj)
 end
 
 local function evalIfExpression(node, env)
-    return ifNotError(Eval(node.condition, env), function(condition)
+    return ifNotError(eval(node.condition, env), function(condition)
         if isTruthy(condition) then
-            return Eval(node.consequence, env)
+            return eval(node.consequence, env)
         end
         if node.alternative ~= nil then
-            return Eval(node.alternative, env)
+            return eval(node.alternative, env)
         end
         return M_NULL
     end)
@@ -165,7 +151,7 @@ end
 local function evalBlockStatement(node, env)
     local result
     for i = 1, #node.statements do
-        result = Eval(node.statements[i], env)
+        result = eval(node.statements[i], env)
         if result.className == "MReturnValue" or result.className == "MError" then
             return result
         end
@@ -192,7 +178,7 @@ end
 local function evalExpressions(arguments, env)
     local args = {}
     for i = 1, #arguments do
-        local evaluated = Eval(arguments[i], env)
+        local evaluated = eval(arguments[i], env)
         if isError(evaluated) then
             return { evaluated }
         end
@@ -219,7 +205,7 @@ end
 local function applyFunction(fn, args)
     if fn.className == "MFunction" then
         local extendEnv = extendFunctionEnv(fn, args)
-        local evaluated = Eval(fn.body, extendEnv)
+        local evaluated = eval(fn.body, extendEnv)
         return unwrapReturnValue(evaluated)
     end
     if fn.className == "MBuiltinFunction" then
@@ -264,12 +250,12 @@ end
 local function evalHashLiteral(hashPairs, env)
     local p = {}
     for keyNode, valueNode in pairs(hashPairs) do
-        local key = Eval(keyNode, env)
+        local key = eval(keyNode, env)
         if isError(key) then
             return key
         end
         if key:is(MValue) then
-            local value = Eval(valueNode, env)
+            local value = eval(valueNode, env)
             if isError(value) then
                 return value
             end
@@ -281,10 +267,7 @@ local function evalHashLiteral(hashPairs, env)
     return MHash { entries = p }
 end
 
-function Eval(node, env)
-    if node.className == "Program" then
-        return evalProgram(node.statements, env)
-    end
+function eval(node, env)
     if node.className == "Identifier" then
         return evalIdentifier(node.value, env)
     end
@@ -292,8 +275,8 @@ function Eval(node, env)
         return MInteger { value = node.value }
     end
     if node.className == "InfixExpression" then
-        return ifNotError(Eval(node.left, env), function(left)
-            return ifNotError(Eval(node.right, env), function(right)
+        return ifNotError(eval(node.left, env), function(left)
+            return ifNotError(eval(node.right, env), function(right)
                 return evalInfixExpression(node.operator, left, right)
             end)
         end)
@@ -302,13 +285,13 @@ function Eval(node, env)
         return evalBlockStatement(node, env)
     end
     if node.className == "ExpressionStatement" then
-        return Eval(node.expression, env)
+        return eval(node.expression, env)
     end
     if node.className == "IfExpression" then
         return evalIfExpression(node, env)
     end
     if node.className == "CallExpression" then
-        return ifNotError(Eval(node.expression, env), function(f)
+        return ifNotError(eval(node.expression, env), function(f)
             local args = evalExpressions(node.arguments, env)
             if #args == 1 and isError(args[1]) then
                 return args[1]
@@ -317,12 +300,12 @@ function Eval(node, env)
         end)
     end
     if node.className == "ReturnStatement" then
-        return ifNotError(Eval(node.returnValue, env), function(value)
+        return ifNotError(eval(node.returnValue, env), function(value)
             return MReturnValue { value = value }
         end)
     end
     if node.className == "PrefixExpression" then
-        return ifNotError(Eval(node.right, env), function(right)
+        return ifNotError(eval(node.right, env), function(right)
             return evalPrefixExpression(node.operator, right)
         end)
     end
@@ -330,7 +313,7 @@ function Eval(node, env)
         return toMBoolean(node.value)
     end
     if node.className == "LetStatement" then
-        return ifNotError(Eval(node.value, env), function(value)
+        return ifNotError(eval(node.value, env), function(value)
             --env[node.name.value] = value
             env:set(node.name.value, value)
             return value
@@ -343,12 +326,12 @@ function Eval(node, env)
         return MString { value = node.value }
     end
     if node.className == "IndexExpression" then
-        local left = Eval(node.left, env)
+        local left = eval(node.left, env)
         if isError(left) then
             return left
         end
 
-        local index = Eval(node.index, env)
+        local index = eval(node.index, env)
         if isError(index) then
             return index
         end
@@ -367,4 +350,20 @@ function Eval(node, env)
     print(string.format("%s => %s", node, node.className))
     return nil
 end
+
+function Eval(program, env)
+    local result
+    local statements = program.statements
+    for i = 1, #statements do
+        result = eval(statements[i], env)
+        if result.className == "MReturnValue" then
+            return result.value
+        end
+        if result.className == "MError" then
+            return result
+        end
+    end
+    return result
+end
+
 

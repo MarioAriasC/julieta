@@ -20,8 +20,10 @@ end
 Statement = Node:extend(tokenLiteralAware)
 Statement.className = "Statement"
 
-Expression = Node:extend(tokenLiteralAware)
-Expression.className = "Expression"
+Expression = Statement
+
+--[[Expression = Node:extend(tokenLiteralAware)
+Expression.className = "Expression"]]
 
 Identifier = Expression:extend()
 Identifier.className = "Identifier"
@@ -35,18 +37,18 @@ LetStatement.__tostring = function(v)
     return string.format("%s %s = %s", v:getTokenLiteral(), v.name, v.value)
 end
 
-Program = Node:extend()
+Program = Class()
 Program.className = "Program"
 Program.__tostring = function(v)
     return table.concat(Map(v.statements, tostring), "")
 end
 
-function Program:getTokenLiteral()
+--[[function Program:getTokenLiteral()
     if #self.statements == 0 then
         return ""
     end
     return self.statements[1]:getTokenLiteral()
-end
+end]]
 
 LiteralExpression = Expression:extend()
 LiteralExpression.className = "LiteralExpression"
