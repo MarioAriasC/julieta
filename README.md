@@ -2,7 +2,7 @@
 
 [Lua](https://www.lua.org/) implementation of the [Monkey Language](https://monkeylang.org/)
 
-Julieta has many sibling implementations
+Julieta has many sibling implementations.
 
 * Kotlin: [monkey.kt](https://github.com/MarioAriasC/monkey.kt)
 * Crystal: [Monyet](https://github.com/MarioAriasC/monyet)
@@ -26,10 +26,10 @@ luarocks install busted
 | Script                               | Description                                        |
 |--------------------------------------|----------------------------------------------------|
 | [`./tests.sh`](tests.sh)             | Run tests                                          |
-| [`lua benchmarks.py`](benchmarks.py) | Run the classic monkey benchmark (`fibonacci(35)`) |
-| [`lua repl.py`](repl.py)             | Run the Julieta REPL                               |
+| [`lua benchmarks.lua`](benchmarks.lua) | Run the classic monkey benchmark (`fibonacci(35)`) |
+| [`lua repl.lua`](repl.lua)             | Run the Julieta REPL                               |
 
-You can run the benchmarks and repl files with either Lua or LuaJit. I didn't try any other Lua interprete
+You can run the benchmarks and repl files with either Lua or LuaJit. I didn't try any other Lua interpreter
 
 ## Acknowlegments 
 
